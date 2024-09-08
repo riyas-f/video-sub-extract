@@ -1,0 +1,71 @@
+volumes:
+  ecowiser_local_postgres_data: {}
+  ecowiser_local_postgres_data_backups: {}
+  ecowiser_local_redis_data: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: ecowiser_local_django
+    container_name: ecowiser_local_django
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - '8000:8000'
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: ecowiser_production_postgres
+    container_name: ecowiser_local_postgres
+    volumes:
+      - ecowiser_local_postgres_data:/var/lib/postgresql/data
+      - ecowiser_local_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.local/.postgres
+
+  redis:
+    image: docker.io/redis:6
+    container_name: ecowiser_local_redis
+    
+    volumes:
+      - ecowiser_local_redis_data:/data
+    
+
+  celeryworker:
+    <<: *django
+    image: ecowiser_local_celeryworker
+    container_name: ecowiser_local_celeryworker
+    depends_on:
+      - redis
+      - postgres
+    ports: []
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *django
+    image: ecowiser_local_celerybeat
+    container_name: ecowiser_local_celerybeat
+    depends_on:
+      - redis
+      - postgres
+    ports: []
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: ecowiser_local_flower
+    container_name: ecowiser_local_flower
+    ports:
+      - '5555:5555'
+    command: /start-flower

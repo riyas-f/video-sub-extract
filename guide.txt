@@ -1,0 +1,18 @@
+
+cd /app/ccextractor/linux
+
+apt-get update
+apt-get install -y git build-essential libpng-dev libutf8proc-dev libtesseract-dev
+
+git clone https://github.com/gpac/gpac.git
+cd gpac
+
+./configure --static-mp4box --use-zlib=no --use-png=no --use-jpeg=no --use-freetype=no --use-fontconfig=no --use-x11=no --use-ffmpeg=no --use-openjpeg=no --use-openssl=no --use-xml2=no --use-a52=no --use-mad=no --use-vorbis=no --use-theora=no --use-ogg=no
+make -j$(nproc)
+make install
+
+ldconfig -p | grep libgpac
+
+chmod -R 777 /tmp/subtitles/
+
+./ccextractor --help

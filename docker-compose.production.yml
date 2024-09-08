@@ -1,0 +1,107 @@
+volumes:
+  production_postgres_data: {}
+  production_postgres_data_backups: {}
+  production_traefik: {}
+  production_redis_data: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: ecowiser_production_django
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start
+    volumes:
+      - .:/app
+      # - /usr/bin/ccextractor:/usr/bin/ccextractor:ro
+      # - /lib/aarch64-linux-gnu:/lib/aarch64-linux-gnu 
+      # - /home/newuser/video-extractor/subtitles:/home/newuser/video-extractor/subtitles 
+      - /home/newuser/video-extractor/subtitles:/app/subtitles
+      - /home/newuser/video-extractor/temp:/tmp
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: ecowiser_production_postgres
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data
+      - production_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.production/.postgres
+
+  traefik:
+    build:
+      context: .
+      dockerfile: ./compose/production/traefik/Dockerfile
+    image: ecowiser_production_traefik
+    depends_on:
+      - django
+    volumes:
+      - production_traefik:/etc/traefik/acme
+    ports:
+      - '0.0.0.0:80:80'
+      - '0.0.0.0:443:443'
+      - '0.0.0.0:5555:5555'
+    labels:
+      - "traefik.http.middlewares.large-body-limit.buffering.maxRequestBodyBytes=100000000"
+      - "traefik.http.services.django.loadbalancer.server.forwardTimeouts.dialTimeout=60s"
+      - "traefik.http.services.django.loadbalancer.server.forwardTimeouts.responseHeaderTimeout=60s"
+      - "traefik.http.services.django.loadbalancer.server.forwardTimeouts.idleTimeout=120s"
+
+  redis:
+    image: docker.io/redis:6
+    volumes:
+      - production_redis_data:/data
+
+  celeryworker:
+    <<: *django
+    image: ecowiser_production_celeryworker
+    command: /start-celeryworker
+    volumes:
+      - .:/app
+      # - /usr/bin/ccextractor:/usr/bin/ccextractor:ro
+      # - /lib/aarch64-linux-gnu:/lib/aarch64-linux-gnu
+      # - /home/newuser/video-extractor/subtitles:/home/newuser/video-extractor/subtitles 
+      - /home/newuser/video-extractor/subtitles:/app/subtitles
+      - /home/newuser/video-extractor/temp:/tmp
+    
+
+  celerybeat:
+    <<: *django
+    image: ecowiser_production_celerybeat
+    command: /start-celerybeat
+    volumes:
+      - .:/app
+      # - /usr/bin/ccextractor:/usr/bin/ccextractor:ro
+      # - /lib/aarch64-linux-gnu:/lib/aarch64-linux-gnu
+      # - /home/newuser/video-extractor/subtitles:/home/newuser/video-extractor/subtitles 
+      - /home/newuser/video-extractor/subtitles:/app/subtitles
+      - /home/newuser/video-extractor/temp:/tmp
+
+  flower:
+    <<: *django
+    image: ecowiser_production_flower
+    command: /start-flower
+    volumes:
+      - .:/app
+      # - /usr/bin/ccextractor:/usr/bin/ccextractor:ro
+      # - /lib/aarch64-linux-gnu:/lib/aarch64-linux-gnu
+      # - /home/newuser/video-extractor/subtitles:/home/newuser/video-extractor/subtitles 
+      - /home/newuser/video-extractor/subtitles:/app/subtitles
+      - /home/newuser/video-extractor/temp:/tmp
+
+  awscli:
+    build:
+      context: .
+      dockerfile: ./compose/production/aws/Dockerfile
+    env_file:
+      - ./.envs/.production/.django
+    volumes:
+      - production_postgres_data_backups:/backups:z

@@ -1,0 +1,81 @@
+
+
+{% load static %}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video</title>
+    <style>
+        body {
+            font-family: consolas;
+        }
+        #st {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        table {
+            padding-bottom: 50px;
+            border-radius: 1px;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <video controls>
+        <source src="{{ video_file }}" type="video/mp4">
+        <track label="English" kind="subtitles" srclang="en" src="{{ sub }}" default />
+        Your browser does not support the video tag.
+    </video>
+    <div id="st">
+        
+
+        <p><h2>Search words here</h2></p>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="search" name="search" placeholder="Search subtitles">
+            <button type="submit">Search</button>
+        </form>
+        
+        <!-- Show search results if any -->
+        <!-- {% if results %}
+            <table border="1">
+                <h2>Search Results:</h2>
+                <tr><th>Records</th></tr>
+                {% for item in results %}
+                    <tr><td>{{ item }}</td></tr>
+                {% endfor %}
+            </table>
+        {% endif %} -->
+
+        {% if results %}
+        <h2>Search Results:</h2>
+        <table border="1">
+            <tr>
+                <th>Start</th>
+                <th>End</th>
+                <th>Line</th>
+            </tr>
+            {% for item in results %}
+                <tr>
+                    <td>{{ item.start }}</td>
+                    <td>{{ item.end }}</td>
+                    <td>{{ item.lines }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+        
+    </div>
+</body>
+</html>
+

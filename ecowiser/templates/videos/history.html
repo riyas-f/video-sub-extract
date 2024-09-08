@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Upload Video
+{% endblock title %}
+
+{% block content %}
+<style>
+    #body {
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        margin-top: 100px;
+    }
+
+    table {
+        width: 80%;
+        margin: 0 auto;
+        border-collapse: collapse;
+        border: 1px solid #ddd;
+        table-layout: fixed; /* Ensure columns are fixed in width */
+    }
+
+    th, td {
+        padding: 8px 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        white-space: nowrap; /* Prevent text wrapping */
+        overflow: hidden; /* Hide overflowed content */
+        text-overflow: ellipsis; /* Add ellipsis (...) to overflowing text */
+    }
+
+    th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    a {
+        color: #3498db;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Limit the column widths */
+    td:nth-child(1) { max-width: 150px; } /* Title */
+    td:nth-child(2) { max-width: 200px; } /* Video Path */
+    td:nth-child(3) { max-width: 200px; } /* VTT Path */
+    td:nth-child(4) { max-width: 150px; } /* Uploaded On */
+    td:nth-child(5) { max-width: 100px; } /* Status */
+    td:nth-child(6) { max-width: 80px;  text-align: center; } /* View Button */
+</style>
+
+<div>
+    {% if results %}
+        <h2>Video History:</h2>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Video Path</th>
+                <th>VTT Path</th>
+                <th>Uploaded On</th>
+                <th>Status</th>
+                <th>View</th>
+            </tr>
+            {% for video in results %}
+                <tr>
+                    <td>{{ video.title }}</td>
+                    <td>{{ video.video_path }}</td>
+                    <td>{{ video.vtt_path }}</td>
+                    <td>{{ video.upload_timestamp }}</td>
+                    <td>{{ video.status }}</td>
+                    <td>
+                        <a href="https://videoextract.virtualemulators.com/videos/search/?video_id={{ video.id }}">
+                            View
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No videos found.</p>
+    {% endif %}
+</div>
+{% endblock content %}

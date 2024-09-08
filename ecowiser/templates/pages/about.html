@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>What is this Project</h1>
+            <p>VideoSearch is an innovative platform designed to make your video content easily searchable. By leveraging advanced subtitle extraction and keyword search capabilities, our application allows you to upload videos, process them in the background, and search for specific words or phrases within the video. Whether it’s a music video, a lecture, or any other type of video content, VideoSearch ensures you can quickly find the exact moment where a particular phrase is mentioned.</p><br/>
+
+            <p>
+                How to Use VideoSearch<br/>
+                Upload Your Video: Start by uploading your video file. Our platform supports various video formats.<br/>
+                Background Processing: Once uploaded, our system uses the ccextractor binary to extract subtitles from your video. This process happens seamlessly in the background.<br/>
+                Storage and Indexing: The processed video is stored securely in Amazon S3, and the extracted subtitles are indexed in DynamoDB for efficient searching.<br/>
+                Search with Keywords: Use the search bar to enter any word or phrase. Our application will return the exact time segments within the video where the keywords are mentioned.<br/>
+                Quick Results: Enjoy fast and accurate search results with a maximum latency of approximately 1 second.<br/>
+            </p>
+
+            <p>
+                Key Features<br/>
+                Subtitle Extraction: Utilizes ccextractor for precise subtitle extraction without relying on external APIs.<br/>
+                Secure Storage: Videos are stored in Amazon S3, ensuring reliability and scalability.<br/>
+                Efficient Search: Keywords are indexed in DynamoDB, providing quick and accurate search results.<br/>
+                Django Backend: Built with Django for robust and scalable backend performance.<br/>
+                Background Tasks: Uses Celery for efficient background processing of video files.<br/>
+                
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

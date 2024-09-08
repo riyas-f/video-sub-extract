@@ -1,0 +1,33 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Video</title>
+    <style>
+        body {
+            font-family: consolas;
+            text-align: center;
+        }
+        #loading {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <h2>Video is being processed. Please wait...</h2>
+        <p>This page will automatically refresh.</p>
+        <img src="https://i.imgur.com/llF5iyg.gif" alt="Loading">
+    </div>
+
+    <script>
+        setTimeout(function(){
+            window.location.reload(1);
+        }, 10000);
+    </script>
+</body>
+</html>
