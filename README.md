@@ -1,4 +1,7 @@
 
+## Architecture 
+
+![alt text](image.png)
 
 VideoSearch is an innovative platform designed to make your video content easily searchable. By leveraging advanced subtitle extraction and keyword search capabilities, our application allows you to upload videos, process them in the background, and search for specific words or phrases within the video. Whether it’s a music video, a lecture, or any other type of video content, VideoSearch ensures you can quickly find the exact moment where a particular phrase is mentioned.
 
@@ -45,9 +48,6 @@ VideoSearch is a web application that allows users to upload videos and search f
 
 1. Clone the repository
 
-## Architecture 
-
-![alt text](image.png)
 
 ## progresion 
 
