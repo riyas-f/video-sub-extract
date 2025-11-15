@@ -15,4 +15,5 @@ ldconfig -p | grep libgpac
 
 chmod -R 777 /tmp/subtitles/
 
+
 ./ccextractor --help
